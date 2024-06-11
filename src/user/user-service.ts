@@ -1,42 +1,31 @@
-import { CreateUserDto } from './dtos/CreateUser.dto';
-import { User } from './types/response';
+import { Prisma, User } from '@prisma/client';
+import prisma from '../database';
 
-// this user service instance shows how to create a user, get a user by id, and get all users with in-memory data
-class UserService {
-  usersInDatabase: User[] = [
-    {
-      id: 1,
-      email: 'albkfil@gmail.com',
-      username: 'alibackend',
-    },
-    {
-      id: 2,
-      email: 'bazarjackson@gmail.com',
-      username: 'bazarjackson',
-    },
-    {
-      id: 3,
-      email: 'samaltman@gmail.com',
-      username: 'openaiceo',
-    },
-  ];
-
-  getUserById(id: number): User | null {
-    return this.usersInDatabase.find((user) => user.id === id) || null;
-  }
-  getUsers(): User[] {
-    return this.usersInDatabase;
+export default class UserService {
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    return prisma.user.create({ data });
   }
 
-  createUser(userDto: CreateUserDto): User {
-    const newUser: User = {
-      id: 4,
-      email: userDto.email,
-      username: userDto.username || 'user',
-    };
-    this.usersInDatabase.push(newUser);
-    return newUser;
+  async getAllUsers(): Promise<User[]> {
+    return await prisma.user.findMany({});
+  }
+
+  async getUserById(id: number): Promise<User | null> {
+    return prisma.user.findUnique({ where: { id } });
+  }
+
+  async getUserByEmail(email: string): Promise<User | null> {
+    return prisma.user.findUnique({ where: { email } });
+  }
+
+  async updateUser(
+    id: number,
+    data: Prisma.UserUpdateInput
+  ): Promise<User | null> {
+    return prisma.user.update({ where: { id }, data });
+  }
+
+  async deleteUser(id: number): Promise<User | null> {
+    return prisma.user.delete({ where: { id } });
   }
 }
-
-export default UserService;

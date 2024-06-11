@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: boilerplate-db
+      POSTGRES_USER: boilerplate-user
+      POSTGRES_PASSWORD: boilerplate-password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+volumes:
+  db_data:
